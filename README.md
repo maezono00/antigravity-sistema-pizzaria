@@ -1,90 +1,108 @@
-# 🍕 Sistema Integrado de Caixa, Gestão de Pedidos e Delivery (PDV)
+# 🍕 Integrated POS, Order Management, and Delivery System (PDV)
 
-Sistema de Ponto de Venda (PDV) e Central de Pedidos de alta usabilidade, desenvolvido para atender integralmente aos requisitos funcionais e operacionais das atividades práticas de gestão de vendas e delivery.
+An integrated, local-first **Point of Sale (POS)** and **Kitchen Display System (KDS)** designed for restaurants and pizzerias. Developed as the **final graduation project** for the **SENAI FIC "Desenvolvimento IA Google Antigravity"** course.
 
----
-
-## ⚡ Como Executar em 1 Comando
-
-Não é necessário instalar Node.js, compilar pacotes pesados ou configurar bancos externos. O projeto funciona 100% com **Python 3** nativo e banco de dados **SQLite3** embutido.
-
-### Opção 1 (Via terminal):
-```bash
-python3 run.py
-```
-ou:
-```bash
-./iniciar.sh
-```
-
-A aplicação iniciará automaticamente o servidor e informará o endereço para abrir no navegador:
-👉 **http://localhost:8000** (ou http://localhost:8001 caso a porta 8000 esteja ocupada).
+This application is optimized for touch-screen responsiveness, keyboard-driven high-speed operations, and local-first execution.
 
 ---
 
-## 🎯 Requisitos Implementados
+## ⚡ Quick Start (1-Command Run)
 
-### 1. RF-01: Cadastro e Gestão de Clientes
-- Consulta ágil por nome, telefone ou CPF na comanda (atalho **F7**).
-- Cadastro de novos clientes com endereço completo, bairro e validação.
-- Histórico e associação direta com os pedidos.
+There is no need to configure complex database servers, compile heavy node packages, or install external frameworks. The system runs on native **Python 3** and an embedded **SQLite3** database.
 
-### 2. RF-02: Lançamento e Notificação de Pedidos (PDV)
-- Interface inspirada no **Stitch** e focada em touch-screen e agilidade no balcão.
-- Navegação por categorias (*Pizzas, Hambúrgueres, Acompanhamentos, Bebidas, Sobremesas*).
-- Carrinho/comanda dinâmico em tempo real com controle de quantidade.
-- Monitor de Cozinha (**KDS**) com avanço de etapas de preparo (*Pendente -> Em Preparo -> Pronto -> Despachado*).
-- Atalhos de teclado rápidos para o operador de caixa:
-  - **F2**: Finalizar e Liquidar Venda
-  - **F4**: Limpar Comanda
-  - **F7**: Identificar Cliente
-  - **F9**: Capturar simulação de pedido iFood
-  - **ESC**: Fechar modais
+### How to Run
 
-### 3. RF-03: Processamento e Liquidação de Pagamentos
-- Suporte a múltiplos métodos de pagamento:
-  - **Dinheiro**: Cálculo instantâneo e seguro de troco.
-  - **PIX**: Geração de QR Code e chave em tempo real.
-  - **Cartão de Crédito e Débito**.
-- Impressão/Visualização imediata do cupom de comanda física para conferência.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/maezono00/antigravity-sistema-pizzaria.git
+   cd antigravity-sistema-pizzaria
+   ```
 
-### 4. RF-04: Cálculo de Frete e Roteamento de Entregas
-- Cálculo automático da taxa de entrega baseado no bairro e distância em km.
-- Separação entre pedidos de Balcão e Delivery.
-- Acompanhamento do status de rota dos entregadores.
+2. **Execute the run command:**
+   * **Using Python directly:**
+     ```bash
+     python3 run.py
+     ```
+   * **Or using the provided bash script:**
+     ```bash
+     ./iniciar.sh
+     ```
 
-### 5. RF-05: Integrador de Plataformas de Delivery (iFood, Uber Eats, 99 Food)
-- **Adapter Pattern** unificado para captura de pedidos externos.
-- Botões interativos na interface (**Simular iFood**, **Simular Uber**, **Simular 99**) para demonstrações práticas sem necessidade de credenciais de produção de terceiros.
-- Alertas e notificações automáticas na tela quando novos pedidos chegam.
-
-### 6. RF-06: Controle e Baixa Automática de Estoque
-- Atualização em tempo real do estoque a cada venda realizada.
-- Bloqueio de venda caso o produto não possua saldo em estoque.
-- Badges visuais destacando itens com estoque baixo.
-
-### 7. RF-07: Abertura e Fechamento Mapeado de Caixa
-- Abertura de turno com registro do operador e fundo de troco inicial.
-- Lançamento de movimentações financeiras: **Sangria** (retirada) e **Suprimento** (aporte) com justificativas.
-- Fechamento cego e conciliação mapeada: cálculo automático de divergências (sobras ou faltas) e relatório financeiro por meio de pagamento com 100% de precisão.
+3. **Open your browser:**
+   Go to 👉 **[http://localhost:8000](http://localhost:8000)** (or `http://localhost:8001` if port 8000 is occupied).
 
 ---
 
-## 📂 Estrutura do Projeto
+## 🎯 Implemented Features
 
-```
+### 1. Customer Management (RF-01)
+* **Quick Lookup:** Instantly search for customers by name, phone, or CPF using the **F7** shortcut within the order interface.
+* **Seamless Registration:** Easily register new customers with full addresses, neighborhood mapping, and field validation.
+* **Order Association:** Automatically link customers' history and addresses to their respective orders.
+
+### 2. Order Entry & Kitchen Monitor (RF-02)
+* **Stitch-Inspired UI:** Responsive interface tailored for touch-screens and swift counter operations.
+* **Dynamic Menu Navigation:** Categorized catalog (*Pizzas, Burgers, Sides, Drinks, Desserts*) with real-time quantity controls.
+* **KDS (Kitchen Display System):** Live kitchen screen tracking order prep progress (*Pending ➔ Preparing ➔ Ready ➔ Dispatched*).
+* **Keyboard Shortcuts:**
+  * `F2` — Finish & Liquidate Sale
+  * `F4` — Clear Active Order / Cart
+  * `F7` — Identify Customer
+  * `F9` — Simulate Incoming iFood Order
+  * `ESC` — Close Modals
+
+### 3. Payment Processing & Checkout (RF-03)
+* **Multiple Methods:** Complete checkout flows for Cash, PIX, Credit, and Debit cards.
+* **Change Calculator:** Automatically computes exact change for cash transactions.
+* **PIX QR Generator:** Simulates real-time PIX key and QR Code generation.
+* **Receipt Preview:** Immediate printable checkout receipt view for physical order verification.
+
+### 4. Delivery Fees & Routing (RF-04)
+* **Automated Rates:** Dynamically calculates delivery charges based on distance (km) and the customer's neighborhood.
+* **Fulfillment Filters:** Clean visual segregation between Dine-In/Counter orders and Delivery orders.
+* **Courier Tracking:** Interactive status monitor tracking delivery driver routing.
+
+### 5. Multi-Platform Delivery Simulator (RF-05)
+* **Adapter Pattern Architecture:** Implements a unified adapter layout to handle external delivery integrations (iFood, Uber Eats, 99 Food).
+* **Interactive Demo Buttons:** Dedicated on-screen simulators (**Simulate iFood**, **Simulate Uber**, **Simulate 99**) to test platform ingestions without requiring active merchant production credentials.
+* **Real-time Notifications:** Instant alerts display immediately when external simulator orders are received.
+
+### 6. Inventory & Auto-Deductions (RF-06)
+* **Real-Time Deductions:** Automatic inventory deduction occurs the instant an order is finalized.
+* **Safety Lockouts:** Blocks selling items that do not have enough remaining stock.
+* **Low-Stock Warnings:** Visually tags low-stock ingredients or items with warnings in the catalog.
+
+### 7. Cash Drawer & Shift Management (RF-07)
+* **Opening Drawer Logs:** Records initial bank/petty cash reserves and the operating clerk at shift launch.
+* **Adjustments:** Log cash additions (**Suprimento**) or quick cash drops (**Sangria**) with mandatory text justifications.
+* **Blind Drawer Reconciliation:** Facilitates end-of-day blind counts, automatically highlighting drawer discrepancies (shortages/surpluses) alongside a detailed financial report per payment method.
+
+---
+
+## 📂 Project Structure
+
+```text
 antigravity-projeto-final/
 ├── app/
 │   ├── static/
-│   │   ├── css/style.css       # Estilização visual complementar
-│   │   ├── js/app.js           # Lógica do Caixa, KDS, Delivery e Modais
-│   │   └── index.html          # Interface PDV completa (Tailwind + Icons)
-│   ├── database.py             # Modelagem e persistência SQLite
-│   ├── services.py             # Regras de negócio, cálculo de frete e adaptador delivery
-│   └── server.py               # Servidor HTTP RESTful local
-├── run.py                      # Script de execução imediata
-├── iniciar.sh                  # Script executável bash
-├── requisitos.txt              # Especificação de requisitos original
-├── aspectos_tecnicos_programacao.txt # Diretrizes arquiteturais originais
-└── README.md                   # Documentação do projeto
+│   │   ├── css/style.css       # Custom UI layout styling
+│   │   ├── js/app.js           # POS front-end logic, KDS, delivery integrations
+│   │   └── index.html          # Main HTML structure with Tailwind CSS & Icons
+│   ├── database.py             # SQLite data models, seeding, and connections
+│   ├── services.py             # Business rules, delivery adapter & delivery fees
+│   └── server.py               # Lightweight Python HTTP REST server
+├── run.py                      # Master execution script
+├── iniciar.sh                  # One-click bash script
+├── requisitos.txt              # Original functional specifications document
+├── aspectos_tecnicos_programacao.txt # Original technical programming guidelines
+└── README.md                   # Project documentation
 ```
+
+---
+
+## 🛠️ Architecture & Tech Stack
+
+* **Language & Backend:** Native Python 3, making deployment seamless and lightweight without heavy framework dependencies.
+* **Database:** SQLite3 embedded relational database for local-first reliability.
+* **Design & Styling:** Tailwind CSS combined with a **Stitch/Clarity** style dashboard layout for high accessibility.
+* **Software Patterns:** Implements the **Adapter Design Pattern** to ingest and process heterogeneous external API orders seamlessly under a unified internal interface.
