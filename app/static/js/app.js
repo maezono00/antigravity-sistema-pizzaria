@@ -476,6 +476,8 @@ const App = {
             status: 'EM_PREPARO'
         };
 
+        pedidoPayload.total = total;
+
         const res = await fetch('/api/pedidos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -487,39 +489,58 @@ const App = {
             this.fecharModais();
             this.state.carrinho = [];
             this.state.clienteAtual = null;
+            this.state.taxaEntrega = 0;
+            this.state.tipoEntrega = 'BALCAO';
             await this.carregarProdutos();
             await this.carregarCaixa();
             await this.carregarPedidos();
-            this.exibirComandaImpressao(data.numero_comanda, pedidoPayload);
+            this.exibirComandaImpressao(data.numero_comanda, pedidoPayload, data.total || total);
         } else {
             alert("Erro ao emitir pedido: " + (data.error || 'Erro'));
         }
     },
 
-    exibirComandaImpressao: function(numeroComanda, pedido) {
+    exibirComandaImpressao: function(numeroComanda, pedido, totalPago) {
         document.getElementById('comanda-numero').innerText = `#${numeroComanda}`;
         document.getElementById('comanda-data').innerText = new Date().toLocaleString('pt-BR');
         document.getElementById('comanda-cliente').innerText = pedido.cliente_nome;
         document.getElementById('comanda-origem').innerText = pedido.origem;
 
+        let subtotalCalculado = 0;
         let htmlItens = '';
         pedido.itens.forEach(item => {
+            const itemTotal = item.preco * item.quantidade;
+            subtotalCalculado += itemTotal;
             let det = '';
             if (item.detalhes) {
-                det = `<div style="font-size:10px; color:#F59E0B; padding-left:8px;">↳ Borda: ${item.detalhes.borda}${item.detalhes.observacao ? ' | Obs: ' + item.detalhes.observacao : ''}</div>`;
+                det = `<div style="font-size:10px; color:#555; padding-left:8px;">↳ Borda: ${item.detalhes.borda}${item.detalhes.observacao ? ' | Obs: ' + item.detalhes.observacao : ''}</div>`;
             }
             htmlItens += `
-                <div style="border-bottom: 1px dotted #383236; padding: 2px 0;">
+                <div style="border-bottom: 1px dotted #ccc; padding: 2px 0;">
                     <div style="display:flex; justify-content:space-between; font-weight:bold;">
                         <span>${item.quantidade}x ${item.nome}</span>
-                        <span style="color:#F59E0B;">R$ ${(item.preco * item.quantidade).toFixed(2)}</span>
+                        <span>R$ ${itemTotal.toFixed(2)}</span>
                     </div>
                     ${det}
                 </div>
             `;
         });
+
+        if (pedido.taxa_entrega && pedido.taxa_entrega > 0) {
+            htmlItens += `
+                <div style="display:flex; justify-content:space-between; font-size:11px; padding: 2px 0; color:#444;">
+                    <span>TAXA DE ENTREGA:</span>
+                    <span>R$ ${pedido.taxa_entrega.toFixed(2)}</span>
+                </div>
+            `;
+        }
+
+        const totalFinal = (totalPago !== undefined && totalPago !== null) 
+            ? totalPago 
+            : (pedido.total !== undefined ? pedido.total : (subtotalCalculado + (pedido.taxa_entrega || 0)));
+
         document.getElementById('comanda-itens-lista').innerHTML = htmlItens;
-        document.getElementById('comanda-total').innerText = `R$ ${this.calcularTotal().toFixed(2)}`;
+        document.getElementById('comanda-total').innerText = `R$ ${parseFloat(totalFinal).toFixed(2)}`;
         document.getElementById('comanda-pagamento').innerText = pedido.forma_pagamento;
         document.getElementById('modal-comanda-impressao').classList.remove('hidden');
     },

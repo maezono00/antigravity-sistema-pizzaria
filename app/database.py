@@ -134,18 +134,18 @@ def seed_data(cursor, conn):
             ("PIZ-PAR", "Pizza Parma com Rúcula", "Pizzas Especiais", 69.00, 45, "Fatias de presunto de Parma curado cru, lascas de queijo parmesão maturado e rúcula fresca selvagem.", "https://images.unsplash.com/photo-1588315029754-2dd089d39a1a?w=400&q=80"),
 
             # Pizzas Doces
-            ("PIZ-NUT", "Pizza Nutella com Morango", "Pizzas Doces", 45.00, 50, "Creme de avelã Nutella legítimo espalhado em massa fininha crocante, finalizada com morangos frescos e raspas de chocolate.", "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&q=80"),
-            ("PIZ-BAN", "Pizza Banana com Canela & Mel", "Pizzas Doces", 42.00, 40, "Fatias de banana nanica caramelizadas no forno a lenha, canela em pó do Ceilão e toque de chocolate branco.", "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80"),
-            ("PIZ-ROM", "Pizza Romeu e Julieta", "Pizzas Doces", 44.00, 45, "Queijo minas meia-cura levemente derretido com goiabada cascão cremosa derretida no forno a lenha.", "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=400&q=80"),
+            ("PIZ-NUT", "Pizza Nutella com Morango", "Pizzas Doces", 45.00, 50, "Creme de avelã Nutella legítimo espalhado em massa fininha crocante, finalizada com morangos frescos e raspas de chocolate.", "/img/produtos/pizza_nutella.jpg"),
+            ("PIZ-BAN", "Pizza Banana com Canela & Mel", "Pizzas Doces", 42.00, 40, "Fatias de banana nanica caramelizadas no forno a lenha, canela em pó do Ceilão e toque de chocolate branco.", "/img/produtos/pizza_banana.jpg"),
+            ("PIZ-ROM", "Pizza Romeu e Julieta", "Pizzas Doces", 44.00, 45, "Queijo minas meia-cura levemente derretido com goiabada cascão cremosa derretida no forno a lenha.", "/img/produtos/pizza_romeu_julieta.jpg"),
 
             # Entradas & Calzones
             ("ENT-COR", "Corniccione Crocante ao Alecrim", "Entradas", 26.00, 60, "Massa de pizza fina e crocante regada com azeite de oliva extravirgem, sal grosso e folhas de alecrim fresco.", "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=400&q=80"),
             ("CAL-CAR", "Calzone de Carne e Queijo", "Entradas", 38.00, 35, "Pizza fechada no forno recheada com carne desfiada suculenta, queijo mussarela e catupiry.", "https://images.unsplash.com/photo-1536964549204-cce9eab227bd?w=400&q=80"),
 
             # Bebidas
-            ("BEB-COC2L", "Coca-Cola 2 Litros Pet", "Bebidas", 15.00, 150, "Refrigerante 2 Litros geladíssimo, ideal para acompanhar a pizza da família.", "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80"),
-            ("BEB-GUAR2L", "Guaraná Antarctica 2L", "Bebidas", 14.00, 120, "Refrigerante de Guaraná original bem gelado.", "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&q=80"),
-            ("BEB-COCLT", "Coca-Cola Lata 350ml", "Bebidas", 7.50, 180, "Lata individual gelada.", "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80"),
+            ("BEB-COC2L", "Coca-Cola 2 Litros Pet", "Bebidas", 15.00, 150, "Refrigerante 2 Litros geladíssimo, ideal para acompanhar a pizza da família.", "/img/produtos/coca_2l.jpg"),
+            ("BEB-GUAR2L", "Guaraná Antarctica 2L", "Bebidas", 14.00, 120, "Refrigerante de Guaraná original bem gelado.", "/img/produtos/guarana_2l.jpg"),
+            ("BEB-COCLT", "Coca-Cola Lata 350ml", "Bebidas", 7.50, 180, "Lata individual gelada.", "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80"),
             ("BEB-HEIN", "Cerveja Heineken Long Neck 330ml", "Bebidas", 12.90, 100, "Cerveja Puro Malte gelada.", "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&q=80"),
             ("BEB-SUC", "Suco Natural de Laranja 1L", "Bebidas", 18.00, 50, "Jarra/garrafa de 1 litro de suco natural da fruta espremido na hora.", "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=400&q=80")
         ]
