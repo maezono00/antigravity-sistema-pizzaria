@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍕 Bella Forneria '98 - Sistema PDV & Delivery Retrô</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 6px;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-color: #161315;
+            color: #ffffff;
+        }
+        .hidden { display: none !important; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- JANELA PRINCIPAL ESTILO ANOS 90 NA PALETA NEUTRA #161315 -->
+    <div class="win-bevel-out" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #231f22;">
+        
+        <!-- BARRA DE TÍTULO DA JANELA NA COR PRIMÁRIA #DC2626 -->
+        <div class="win-titlebar">
+            <div style="display:flex; align-items:center; gap: 6px;">
+                <span style="font-size:14px;">🍕</span>
+                <span>BELLA FORNERIA '98 - Sistema de Caixa & Gestão de Pizzas [Edição Retrô 32-Bits]</span>
+            </div>
+            <div style="display:flex; gap: 3px;">
+                <button class="win-button" style="padding:0 5px; font-size:9px;">_</button>
+                <button class="win-button" style="padding:0 5px; font-size:9px;">□</button>
+                <button class="win-button" style="padding:0 5px; font-size:9px; color: #DC2626;">X</button>
+            </div>
+        </div>
+
+        <!-- BARRA DE MENUS RETRÔ -->
+        <div style="background: #231f22; border-bottom: 1px solid #383236; padding: 2px 6px; font-size: 11px; display: flex; gap: 14px; color: #d0cacf;">
+            <span><u>A</u>rquivo</span>
+            <span><u>E</u>ditar</span>
+            <span><u>P</u>edidos</span>
+            <span><u>F</u>orno (KDS)</span>
+            <span><u>E</u>ntregas</span>
+            <span><u>C</u>aixa</span>
+            <span><u>A</u>juda</span>
+        </div>
+
+        <!-- MARQUEE RETRÔ ANOS 90 COM COR SECUNDÁRIA #F59E0B -->
+        <div class="retro-marquee">
+            <marquee behavior="scroll" direction="left" scrollamount="4">
+                🔥 BELLA FORNERIA '98 *** FORNO A LENHA A 400°C *** CARDÁPIO DE PIZZAS TRADICIONAIS E PREMIUM *** OFFLINE-FIRST PRONTO *** CONEXÃO VIA MODEM 56KBPS ***
+            </marquee>
+        </div>
+
+        <!-- BARRA DE FERRAMENTAS / NAVEGAÇÃO -->
+        <div style="background: #231f22; padding: 5px 6px; border-bottom: 2px groove #383236; display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 4px;">
+                <button id="nav-pdv" onclick="App.mudarAba('pdv')" class="win-button active">
+                    🖥️ [F2] Caixa / Vendas
+                </button>
+                <button id="nav-kds" onclick="App.mudarAba('kds')" class="win-button">
+                    🔥 Forno a Lenha (KDS)
+                </button>
+                <button id="nav-delivery" onclick="App.mudarAba('delivery')" class="win-button">
+                    🛵 Delivery & Rotas
+                </button>
+                <button id="nav-caixa" onclick="App.mudarAba('caixa')" class="win-button">
+                    💰 Movimento de Caixa
+                </button>
+                <button id="nav-clientes" onclick="App.mudarAba('clientes')" class="win-button">
+                    👥 [F7] Clientes
+                </button>
+            </div>
+
+            <!-- SIMULADORES DE DELIVERY EXTERNOS -->
+            <div style="display: flex; align-items: center; gap: 4px; background: #1a1619; padding: 2px 6px; border: 1px inset #0a0809;">
+                <span style="font-size: 10px; font-weight: bold; color: #d0cacf;">Simular APIs:</span>
+                <button onclick="App.simularDelivery('IFOOD')" class="win-button win-button-primary" style="font-size: 10px;" title="Simular pedido iFood (F9)">[iFood]</button>
+                <button onclick="App.simularDelivery('UBER_EATS')" class="win-button win-button-tertiary" style="font-size: 10px;">[Uber Eats]</button>
+                <button onclick="App.simularDelivery('99_FOOD')" class="win-button win-button-secondary" style="font-size: 10px;">[99 Food]</button>
+            </div>
+        </div>
+
+        <!-- CORPO PRINCIPAL DO SISTEMA -->
+        <div style="flex: 1; overflow: hidden; background: #161315; padding: 6px; display: flex;">
+
+            <!-- ================= ABA 1: PDV / CAIXA ================= -->
+            <div id="pane-pdv" style="flex: 1; display: flex; gap: 6px; height: 100%; overflow: hidden;">
+                <!-- Esquerda: Cardápio de Pizzas -->
+                <div class="win-bevel-in" style="flex: 1; display: flex; flex-direction: column; background: #1e1a1d; padding: 4px; overflow: hidden;">
+                    
+                    <!-- Busca e Clientes -->
+                    <div style="margin-bottom: 4px; display: flex; gap: 4px;">
+                        <input type="text" id="pdv-busca-input"
+                               oninput="App.state.buscaTermo = this.value; App.renderProdutos();"
+                               placeholder="Digite o sabor ou código da pizza (ex: Calabresa, PIZ-CAL, Coca)..."
+                               class="win-bevel-in" style="flex: 1; padding: 3px 6px; font-size: 11px; background:#161315; color:#fff;">
+                        <button onclick="App.abrirModalCliente()" class="win-button win-button-secondary">
+                            👤 Localizar Cliente (F7)
+                        </button>
+                    </div>
+
+                    <!-- Abas de Categorias -->
+                    <div id="pdv-categorias-bar" style="margin-bottom: 6px; display: flex; gap: 3px; overflow-x: auto; padding-bottom: 2px;"></div>
+
+                    <!-- Grid de Produtos -->
+                    <div id="pdv-produtos-grid" class="win-bevel-in" style="flex: 1; overflow-y: auto; background: #161315; padding: 6px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px;"></div>
+                </div>
+
+                <!-- Direita: Comanda / Cupom do Pedido -->
+                <div class="win-bevel-out" style="width: 320px; display: flex; flex-direction: column; height: 100%; padding: 4px; background: #231f22;">
+                    
+                    <!-- Topo Comanda -->
+                    <div class="win-titlebar" style="font-size: 11px; margin-bottom: 4px;">
+                        <span>📋 Comanda do Pedido</span>
+                        <span id="carrinho-qtd-itens" style="color: #F59E0B;">0 itens</span>
+                    </div>
+
+                    <!-- Tipo de Atendimento -->
+                    <div style="display: flex; gap: 2px; margin-bottom: 4px;">
+                        <button onclick="App.alterarTipoEntrega('BALCAO')" class="win-button" style="flex:1;">🍽️ Balcão</button>
+                        <button onclick="App.alterarTipoEntrega('MESA')" class="win-button" style="flex:1;">🪑 Mesa</button>
+                        <button onclick="App.alterarTipoEntrega('DELIVERY')" class="win-button" style="flex:1;">🛵 Delivery</button>
+                    </div>
+
+                    <div id="carrinho-cliente-badge" style="margin-bottom: 4px;"></div>
+
+                    <!-- Seletor de Bairro para Frete -->
+                    <div style="font-size: 10px; margin-bottom: 4px; color: #ccc;">
+                        <b>Bairro de Entrega (Frete RF-04):</b>
+                        <select onchange="App.state.bairroSelecionado = this.value; App.atualizarFreteBairro();" class="win-bevel-in" style="width: 100%; font-size: 11px; padding: 2px; background:#161315; color:#fff;">
+                            <option value="Centro">Centro (1.8 km - R$ 6.00)</option>
+                            <option value="Bela Vista">Bela Vista (3.2 km - R$ 9.00)</option>
+                            <option value="Consolação">Consolação (3.8 km - R$ 10.00)</option>
+                            <option value="Jardins">Jardins (5.0 km - R$ 14.00)</option>
+                            <option value="Pinheiros">Pinheiros (7.5 km - R$ 18.00)</option>
+                            <option value="Vila Mariana">Vila Mariana (6.2 km - R$ 16.00)</option>
+                        </select>
+                    </div>
+
+                    <!-- Lista de Itens do Carrinho -->
+                    <div id="pdv-carrinho-itens" class="win-bevel-in" style="flex: 1; overflow-y: auto; background: #161315; padding: 4px; margin-bottom: 4px;"></div>
+
+                    <!-- Totais & LCD Display na Paleta -->
+                    <div class="win-bevel-in digital-lcd" style="padding: 6px; margin-bottom: 4px;">
+                        <div style="display:flex; justify-content:space-between; font-size: 12px; color: #aaa;">
+                            <span>SUBTOTAL:</span>
+                            <span id="carrinho-subtotal">R$ 0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size: 12px; color: #aaa;">
+                            <span>TAXA FRETE:</span>
+                            <span id="carrinho-frete">R$ 0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size: 22px; font-weight: bold; color: #F59E0B; border-top: 1px solid #383236; margin-top: 2px; padding-top: 2px;">
+                            <span>TOTAL:</span>
+                            <span id="carrinho-total">R$ 0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Botão Finalizar -->
+                    <div style="display:flex; gap: 4px;">
+                        <button onclick="App.limparCarrinho()" class="win-button" style="color:#DC2626;" title="Limpar Comanda (F4)">[F4] Limpar</button>
+                        <button onclick="App.abrirModalPagamento()" class="win-button win-button-primary" style="flex: 1; font-size: 11px; font-weight: bold;">
+                            💰 [F2] FINALIZAR E PAGAR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= ABA 2: FORNO / COZINHA (KDS) ================= -->
+            <div id="pane-kds" class="win-bevel-in hidden" style="flex: 1; background: #1e1a1d; padding: 6px; overflow-y: auto;">
+                <div class="win-titlebar" style="margin-bottom: 6px;">
+                    <span>🔥 Monitor de Pedidos do Forno a Lenha (KDS)</span>
+                    <button onclick="App.carregarPedidos()" class="win-button" style="font-size:10px;">Atualizar</button>
+                </div>
+                <div id="kds-pedidos-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px;"></div>
+            </div>
+
+            <!-- ================= ABA 3: DELIVERY & ROTAS ================= -->
+            <div id="pane-delivery" class="win-bevel-in hidden" style="flex: 1; background: #1e1a1d; padding: 6px; overflow-y: auto;">
+                <div class="win-titlebar" style="margin-bottom: 6px;">
+                    <span>🛵 Central de Expedição de Delivery (iFood / Uber / 99)</span>
+                </div>
+                <table class="win-bevel-in" style="width: 100%; border-collapse: collapse; text-align: left; background:#161315;">
+                    <thead>
+                        <tr style="background: #2a2529; color: #F59E0B; font-size: 11px; border-bottom: 1px solid #383236;">
+                            <th style="padding: 4px;">Comanda</th>
+                            <th style="padding: 4px;">Origem</th>
+                            <th style="padding: 4px;">Cliente / Endereço</th>
+                            <th style="padding: 4px;">Valor Total</th>
+                            <th style="padding: 4px;">Situação</th>
+                            <th style="padding: 4px; text-align: right;">Comando</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-delivery-pedidos"></tbody>
+                </table>
+            </div>
+
+            <!-- ================= ABA 4: GESTÃO DO CAIXA ================= -->
+            <div id="pane-caixa" class="win-bevel-in hidden" style="flex: 1; background: #1e1a1d; padding: 6px; overflow-y: auto;">
+                <div class="win-titlebar" style="margin-bottom: 6px;">
+                    <span>💰 Caixa Registradora & Fechamento Financeiro (RF-07)</span>
+                </div>
+                <div id="caixa-modulo-detalhes"></div>
+            </div>
+
+            <!-- ================= ABA 5: CLIENTES ================= -->
+            <div id="pane-clientes" class="win-bevel-in hidden" style="flex: 1; background: #1e1a1d; padding: 6px; overflow-y: auto;">
+                <div class="win-titlebar" style="margin-bottom: 6px; display:flex; justify-content:space-between;">
+                    <span>👥 Cadastro Geral de Clientes (RF-01)</span>
+                    <button onclick="App.abrirModalCliente()" class="win-button win-button-secondary" style="font-size:10px;">[+] Cadastrar Novo</button>
+                </div>
+                <table class="win-bevel-in" style="width: 100%; border-collapse: collapse; text-align: left; background:#161315;">
+                    <thead>
+                        <tr style="background: #2a2529; color: #F59E0B; font-size: 11px; border-bottom: 1px solid #383236;">
+                            <th style="padding: 4px;">Nome</th>
+                            <th style="padding: 4px;">Telefone</th>
+                            <th style="padding: 4px;">CPF</th>
+                            <th style="padding: 4px;">Endereço de Entrega</th>
+                            <th style="padding: 4px; text-align: right;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientes-modulo-lista"></tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- BARRA DE STATUS INFERIOR ESTILO RETRÔ -->
+        <div style="background: #231f22; border-top: 1px solid #383236; padding: 2px 6px; font-size: 11px; display: flex; gap: 8px;">
+            <div class="win-bevel-in" style="padding: 1px 6px; display: flex; align-items: center; gap: 4px;">
+                <span>Estado:</span>
+                <span id="caixa-status-badge">ONLINE</span>
+            </div>
+            <div class="win-bevel-in" style="padding: 1px 6px;">
+                Operador: <b id="caixa-operador-info" style="color:#F59E0B;">Arthur</b>
+            </div>
+            <div class="win-bevel-in" style="padding: 1px 6px;">
+                Gaveta Física: <b id="caixa-saldo-info" style="color: #16A34A;">R$ 0.00</b>
+            </div>
+            <div class="win-bevel-in" style="margin-left: auto; padding: 1px 8px; font-family: monospace; color: #aaa;">
+                Paleta Anos 90 (#DC2626 / #F59E0B / #16A34A / #161315)
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= MODAIS ================= -->
+
+    <!-- Modal Personalizar Pizza -->
+    <div id="modal-customizar-pizza" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 440px; padding: 3px; background: #231f22;">
+            <div class="win-titlebar">
+                <span>Personalizar Sabor de Pizza</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <div style="display:flex; gap: 8px; margin-bottom: 8px;">
+                    <img id="modal-pizza-img" src="" style="width: 60px; height: 60px; object-fit: cover; border: 2px inset #0a0809;">
+                    <div>
+                        <h4 id="modal-pizza-nome" style="margin: 0; font-size: 12px; color: #F59E0B;">Nome da Pizza</h4>
+                        <p id="modal-pizza-desc" style="margin: 2px 0 0 0; color: #aaa; font-size: 10px;">Descrição</p>
+                    </div>
+                </div>
+
+                <fieldset class="win-bevel-out" style="margin-bottom: 6px; padding: 4px 6px; background:#1e1a1d;">
+                    <legend style="color:#F59E0B;">1. Tamanho da Pizza:</legend>
+                    <div style="display:flex; gap: 4px;">
+                        <button id="tam-BROTO" onclick="App.selecionarTamanhoPizza('BROTO')" class="win-button btn-tamanho-pizza" style="flex:1;">Broto (4 fat)</button>
+                        <button id="tam-MEDIA" onclick="App.selecionarTamanhoPizza('MEDIA')" class="win-button btn-tamanho-pizza" style="flex:1;">Média (6 fat)</button>
+                        <button id="tam-GRANDE" onclick="App.selecionarTamanhoPizza('GRANDE')" class="win-button btn-tamanho-pizza active" style="flex:1;">Grande (8 fat)</button>
+                        <button id="tam-GIGANTE" onclick="App.selecionarTamanhoPizza('GIGANTE')" class="win-button btn-tamanho-pizza" style="flex:1;">Gigante (12)</button>
+                    </div>
+                </fieldset>
+
+                <fieldset class="win-bevel-out" style="margin-bottom: 6px; padding: 4px 6px; background:#1e1a1d;">
+                    <legend style="color:#F59E0B;">2. Borda Recheada:</legend>
+                    <select onchange="App.selecionarBordaPizza(this.value)" class="win-bevel-in" style="width: 100%; font-size: 11px; padding: 2px; background:#161315; color:#fff;">
+                        <option value="Tradicional (Sem recheio)">Tradicional (Sem recheio) - R$ 0.00</option>
+                        <option value="Borda Catupiry Legítimo">Borda Catupiry Legítimo (+ R$ 12.00)</option>
+                        <option value="Borda Cheddar Cremoso">Borda Cheddar Cremoso (+ R$ 10.00)</option>
+                        <option value="Borda Chocolate com Granulado">Borda Chocolate com Granulado (+ R$ 14.00)</option>
+                        <option value="Borda Vulcão de Catupiry">Borda Vulcão Especial (+ R$ 16.00)</option>
+                    </select>
+                </fieldset>
+
+                <fieldset class="win-bevel-out" style="margin-bottom: 6px; padding: 4px 6px; background:#1e1a1d;">
+                    <legend style="color:#F59E0B;">3. Adicionais:</legend>
+                    <label style="margin-right: 8px;"><input type="checkbox" onchange="App.toggleAdicional('Bacon Extra', 7.00)"> Bacon Extra (+ R$ 7,00)</label>
+                    <label><input type="checkbox" onchange="App.toggleAdicional('Queijo Extra', 8.00)"> Queijo Extra (+ R$ 8,00)</label>
+                </fieldset>
+
+                <div style="margin-bottom: 8px;">
+                    <label style="color:#ccc;">Observação do Cliente:</label>
+                    <input type="text" id="modal-pizza-obs" placeholder="Ex: Sem cebola, massa bem tostada..." class="win-bevel-in" style="width: 100%; padding: 3px; font-size: 11px; background:#161315; color:#fff;">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid #383236; padding-top: 6px;">
+                    <div>
+                        <span style="font-size:10px; color:#aaa;">TOTAL CALCULADO:</span>
+                        <div id="modal-pizza-preco-total" class="digital-lcd" style="padding: 2px 6px; font-size: 16px; font-weight: bold;">R$ 0.00</div>
+                    </div>
+                    <div>
+                        <button onclick="App.fecharModais()" class="win-button">Cancelar</button>
+                        <button onclick="App.confirmarPizzaCustomizada()" class="win-button win-button-tertiary" style="font-weight:bold;">Adicionar à Comanda</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pagamento -->
+    <div id="modal-pagamento" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 400px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span>Liquidação da Comanda</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <div class="win-bevel-in digital-lcd" style="padding: 8px; text-align: center; margin-bottom: 8px;">
+                    <div style="font-size: 11px; color:#aaa;">VALOR TOTAL A PAGAR:</div>
+                    <div id="pagamento-total" style="font-size: 28px; font-weight: bold; color: #F59E0B;">R$ 0.00</div>
+                </div>
+
+                <fieldset class="win-bevel-out" style="margin-bottom: 8px; padding: 6px; background:#1e1a1d;">
+                    <legend style="color:#F59E0B;">Forma de Pagamento:</legend>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                        <button id="forma-DINHEIRO" onclick="App.selecionarFormaPagamento('DINHEIRO')" class="win-button btn-forma-pag active">Dinheiro</button>
+                        <button id="forma-PIX" onclick="App.selecionarFormaPagamento('PIX')" class="win-button btn-forma-pag">PIX</button>
+                        <button id="forma-CARTAO_CREDITO" onclick="App.selecionarFormaPagamento('CARTAO_CREDITO')" class="win-button btn-forma-pag">Crédito</button>
+                        <button id="forma-CARTAO_DEBITO" onclick="App.selecionarFormaPagamento('CARTAO_DEBITO')" class="win-button btn-forma-pag">Débito</button>
+                    </div>
+                </fieldset>
+
+                <!-- Dinheiro & Troco -->
+                <div id="container-troco-dinheiro" class="win-bevel-in" style="padding: 6px; margin-bottom: 8px; background:#161315;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <label style="color:#ccc;">Valor Entregue (R$):</label><br>
+                            <input type="number" id="pagamento-valor-recebido" step="0.50" oninput="App.calcularTroco()" class="win-bevel-in" style="padding: 3px; width: 110px; font-weight:bold; font-family:monospace; background:#0c0a0b; color:#fff;">
+                        </div>
+                        <div style="text-align: right;">
+                            <label style="color:#ccc;">Troco:</label>
+                            <div id="pagamento-troco" class="digital-lcd-green" style="padding: 2px 6px; font-size: 18px; font-weight: bold;">R$ 0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIX QR -->
+                <div id="container-pix-qr" class="win-bevel-in hidden" style="padding: 6px; text-align: center; margin-bottom: 8px; background: #fff; color:#000;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=00020126580014BR.GOV.BCB.PIX0136bellaforneria@pizzaria.com.br5204000053039865802BR" style="width: 100px; height: 100px; border: 1px solid #000; margin: 0 auto;">
+                    <div style="font-size: 10px; font-weight: bold; margin-top: 4px;">PAGAMENTO INSTANTÂNEO PIX</div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap: 4px;">
+                    <button onclick="App.fecharModais()" class="win-button">Cancelar</button>
+                    <button onclick="App.confirmarPagamento()" class="win-button win-button-tertiary" style="font-weight:bold;">[OK] Imprimir Cupom</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cupom Impresso -->
+    <div id="modal-comanda-impressao" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 320px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span>Impressão Térmica</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <div class="win-bevel-in" style="background:#fff; color:#000; padding: 8px; font-family: 'Courier New', monospace; margin-bottom: 8px;">
+                    <div style="text-align:center; font-weight:bold; border-bottom: 1px dashed #000; padding-bottom: 4px;">
+                        ================================<br>
+                        BELLA FORNERIA '98<br>
+                        CUPOM NÃO FISCAL DE VENDA<br>
+                        ================================
+                    </div>
+                    <div style="margin: 4px 0;">
+                        COMANDA: <b id="comanda-numero">#101</b><br>
+                        DATA: <span id="comanda-data">--</span><br>
+                        CLIENTE: <span id="comanda-cliente">--</span><br>
+                        ORIGEM: <span id="comanda-origem">--</span>
+                    </div>
+                    <div id="comanda-itens-lista" style="border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 4px 0;"></div>
+                    <div style="margin-top: 4px; font-weight: bold; display:flex; justify-content:space-between;">
+                        <span>TOTAL PAGO:</span>
+                        <span id="comanda-total">R$ 0.00</span>
+                    </div>
+                    <div>PAGAMENTO: <span id="comanda-pagamento">DINHEIRO</span></div>
+                </div>
+                <button onclick="App.fecharModais()" class="win-button win-button-primary" style="width:100%; font-weight:bold;">[OK] Fechar Cupom</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cliente -->
+    <div id="modal-cliente" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 420px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span>Localizar / Cadastrar Cliente</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <input type="text" id="busca-cliente-input" oninput="App.buscarClientes()" placeholder="Filtrar por nome, fone ou CPF..." class="win-bevel-in" style="width: 100%; padding: 3px; margin-bottom: 6px; background:#161315; color:#fff;">
+                <div id="lista-busca-clientes" class="win-bevel-in" style="max-height: 120px; overflow-y: auto; background: #161315; margin-bottom: 8px;"></div>
+                
+                <fieldset class="win-bevel-out" style="padding: 6px; background:#1e1a1d;">
+                    <legend style="color:#F59E0B;">Novo Cadastro:</legend>
+                    <form onsubmit="App.salvarNovoCliente(event)">
+                        <input type="text" id="novo-cliente-nome" placeholder="Nome Completo *" required class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 3px; background:#161315; color:#fff;">
+                        <input type="text" id="novo-cliente-telefone" placeholder="Telefone / WhatsApp (ex: 1140028922) *" required oninput="mascaraTelefone(this)" maxlength="15" class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 3px; background:#161315; color:#fff;">
+                        <input type="text" id="novo-cliente-cpf" placeholder="CPF (ex: 12345678901)" oninput="mascaraCPF(this)" maxlength="14" class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 3px; background:#161315; color:#fff;">
+                        <input type="text" id="novo-cliente-endereco" placeholder="Endereço (Rua e Número)" class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 3px; background:#161315; color:#fff;">
+                        <select id="novo-cliente-bairro" class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 4px; background:#161315; color:#fff;">
+                            <option value="Centro">Centro</option>
+                            <option value="Bela Vista">Bela Vista</option>
+                            <option value="Consolação">Consolação</option>
+                            <option value="Jardins">Jardins</option>
+                            <option value="Pinheiros">Pinheiros</option>
+                            <option value="Vila Mariana">Vila Mariana</option>
+                        </select>
+                        <input type="text" id="novo-cliente-complemento" placeholder="Apto, Bloco..." class="win-bevel-in" style="width: 100%; padding: 2px; margin-bottom: 6px; background:#161315; color:#fff;">
+                        <button type="submit" class="win-button win-button-secondary" style="width: 100%; font-weight: bold;">Salvar e Selecionar</button>
+                    </form>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Abertura Caixa -->
+    <div id="modal-abrir-caixa" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 320px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span>Abertura de Caixa Registradora</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <form onsubmit="App.submeterAberturaCaixa(event)">
+                    <div style="margin-bottom: 4px;">
+                        <label style="color:#ccc;">Operador:</label><br>
+                        <input type="text" id="abertura-operador" value="Arthur (Operador)" required class="win-bevel-in" style="width: 100%; padding: 2px; background:#161315; color:#fff;">
+                    </div>
+                    <div style="margin-bottom: 4px;">
+                        <label style="color:#ccc;">Fundo de Troco (R$):</label><br>
+                        <input type="number" id="abertura-valor" value="200.00" step="0.50" required class="win-bevel-in" style="width: 100%; padding: 2px; font-weight:bold; font-family:monospace; background:#0c0a0b; color:#F59E0B;">
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="color:#ccc;">Observação:</label><br>
+                        <input type="text" id="abertura-obs" value="Troco de moedas e cédulas conferido" class="win-bevel-in" style="width: 100%; padding: 2px; background:#161315; color:#fff;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap: 4px;">
+                        <button type="button" onclick="App.fecharModais()" class="win-button">Cancelar</button>
+                        <button type="submit" class="win-button win-button-tertiary" style="font-weight:bold;">[OK] Abrir Caixa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Movimentação Caixa -->
+    <div id="modal-movimentacao-caixa" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 320px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span id="mov-titulo">Movimentação de Caixa</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <form onsubmit="App.submeterMovimentacaoCaixa(event)">
+                    <input type="hidden" id="mov-tipo" value="SANGRIA">
+                    <div style="margin-bottom: 4px;">
+                        <label style="color:#ccc;">Valor em Dinheiro (R$):</label><br>
+                        <input type="number" id="mov-valor" step="0.50" required class="win-bevel-in" style="width: 100%; padding: 2px; font-weight:bold; font-family:monospace; background:#0c0a0b; color:#F59E0B;">
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="color:#ccc;">Motivo / Justificativa:</label><br>
+                        <input type="text" id="mov-motivo" required placeholder="Ex: Pagamento entregador" class="win-bevel-in" style="width: 100%; padding: 2px; background:#161315; color:#fff;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap: 4px;">
+                        <button type="button" onclick="App.fecharModais()" class="win-button">Cancelar</button>
+                        <button type="submit" class="win-button win-button-secondary" style="font-weight:bold;">[OK] Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Fechamento Caixa -->
+    <div id="modal-fechar-caixa" class="modal-overlay hidden">
+        <div class="win-bevel-out" style="width: 340px; padding: 3px; background:#231f22;">
+            <div class="win-titlebar">
+                <span>Fechamento do Turno de Caixa</span>
+                <button onclick="App.fecharModais()" class="win-button" style="padding:0 4px; font-size:9px;">X</button>
+            </div>
+            <div style="padding: 8px; font-size: 11px;">
+                <form onsubmit="App.submeterFechamentoCaixa(event)">
+                    <p style="margin: 0 0 6px 0; color: #aaa;">Contagem cega da gaveta: Digite o valor real em cédulas e moedas.</p>
+                    <div style="margin-bottom: 4px;">
+                        <label style="color:#ccc;">Total Contado na Gaveta (R$):</label><br>
+                        <input type="number" id="fechamento-saldo-informado" step="0.01" required class="win-bevel-in" style="width: 100%; padding: 2px; font-weight:bold; font-family:monospace; background:#0c0a0b; color:#fff;">
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="color:#ccc;">Observações de Encerramento:</label><br>
+                        <input type="text" id="fechamento-obs" value="Fim de expediente noturno" class="win-bevel-in" style="width: 100%; padding: 2px; background:#161315; color:#fff;">
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; gap: 4px;">
+                        <button type="button" onclick="App.fecharModais()" class="win-button">Cancelar</button>
+                        <button type="submit" class="win-button win-button-primary" style="font-weight:bold;">[OK] Conciliar & Fechar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Retrô Notificação -->
+    <div id="toast-notification" class="win-bevel-out" style="display: none; position: fixed; bottom: 30px; right: 20px; z-index: 2000; padding: 6px 12px; background: #231f22; border: 2px solid #F59E0B; color: #F59E0B; font-weight: bold; font-size: 11px; box-shadow: 2px 2px 0 #000;"></div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

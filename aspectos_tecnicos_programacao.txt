@@ -1,0 +1,65 @@
+===============================================================================
+ASPECTOS TÉCNICOS E ARQUITETURA DE PROGRAMAÇÃO
+Sistema de Ponto de Venda (PDV) e Gestão de Pedidos
+===============================================================================
+
+1. LINGUAGEM E ECOSSISTEMA
+-------------------------------------------------------------------------------
+- Linguagem Principal: TypeScript
+  * Uso de tipagem estática rigorosa para garantir consistência dos dados de vendas,
+    pagamentos e conciliação financeira.
+  * Compartilhamento de interfaces e DTOs entre a interface gráfica do caixa e o backend local.
+- Runtime / Ambiente: Node.js (v20 LTS ou superior)
+- Formato de Empacotamento: Aplicativo Desktop nativo compilado (Electron / Tauri)
+
+2. FRAMEWORKS E BIBLIOTECAS
+-------------------------------------------------------------------------------
+- Frontend (Interface do Caixa):
+  * React.js com Tailwind CSS (design focado em usabilidade, touch-screen e atalhos de teclado)
+  * State Management: Zustand ou Redux Toolkit (para controle de estado da comanda e carrinho)
+- Backend Local:
+  * NestJS ou Fastify (para criação do servidor HTTP/WebSocket local e injetores de dependência)
+- Validação e Serialização:
+  * Zod / class-validator para validação estrita de esquemas e dados de entrada (RF-01, RF-03)
+
+3. ARQUITETURA E PADRÕES DE DESIGN
+-------------------------------------------------------------------------------
+- Modelo Geral: Monólito Modular + Arquitetura Hexagonal (Ports and Adapters)
+- Padrão de Operação: Offline-First
+  * As vendas e operações do caixa funcionam 100% desconectadas da internet.
+  * Fila local de sincronização assíncrona (background worker/queue) para envio dos dados
+    à nuvem assim que a conectividade for reestabelecida.
+- Padrões de Projeto Aplicados:
+  * Adapter Pattern: Padronização de payloads recebidos das APIs de delivery (iFood, Uber Eats, 99 Food).
+  * Strategy Pattern: Regras variadas de pagamento (PIX, Crédito, Débito, Dinheiro) e cálculo de frete.
+  * Event Emitter / Event-Driven Local: Comunicação assíncrona desacoplada entre o módulo de vendas
+    e o módulo de baixa de estoque e impressão de comandas.
+
+4. BANCO DE DADOS E PERSISTÊNCIA
+-------------------------------------------------------------------------------
+- Banco Local (PDV Offline):
+  * SQLite com SQLCipher (para criptografia de dados sensíveis - RNF-02 LGPD)
+  * ORM / Query Builder: Prisma ORM ou Kysely
+
+5. ESTRUTURA DE DIRETÓRIOS E MODULARIZAÇÃO
+-------------------------------------------------------------------------------
+src/
+├── modules/
+│   ├── sales/           # Gestão de Clientes, Pedidos e Liquidação de Pagamentos (RF-01, RF-02, RF-03)
+│   ├── inventory/       # Controle e Baixa Automática de Estoque / Insumos (RF-06)
+│   ├── delivery/        # Roteamento e Cálculo de Frete (RF-04)
+│   ├── integrations/    # Adaptadores e Webhooks das APIs de Delivery (RF-05)
+│   └── cashier/         # Abertura, Fechamento Mapeado e Sangria do Caixa (RF-07)
+├── shared/              # Utilitários globais, Criptografia, Logger, Barramento de Eventos
+└── main/                # Processo Principal da Aplicação Desktop e Configuração da Janela
+
+6. QUALIDADE DE CÓDIGO E TESTES
+-------------------------------------------------------------------------------
+- Testes Unitários:
+  * Jest / Vitest (Foco em regras financeiras, cálculo de frete, regras de fechamento de caixa e estoque)
+- Testes de Integração:
+  * Supertest para simulação de recepção de Webhooks externos das entregas
+- Testes End-to-End (E2E):
+  * Playwright para validação dos fluxos de tela no caixa (Meta RNF-01: pedido concluído em < 2 min)
+- Análise Estática e Padronização:
+  * ESLint + Prettier

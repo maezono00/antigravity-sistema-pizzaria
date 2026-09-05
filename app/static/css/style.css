@@ -1,0 +1,199 @@
+/* ESTILO ANOS 90 (RETRO WEB 1.0) COM A PALETA DE CORES EXATA:
+   - Primária: #DC2626 (Vermelho Forno / Destaque)
+   - Secundária: #F59E0B (Âmbar / Amarelo Queijo / Atenção)
+   - Terciária: #16A34A (Verde Manjericão / Sucesso / Online)
+   - Neutra: #161315 (Preto Carvão / Fundo Principal / Superfícies)
+*/
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+  --color-primary: #DC2626;
+  --color-secondary: #F59E0B;
+  --color-tertiary: #16A34A;
+  --color-neutral: #161315;
+  --color-neutral-card: #231f22;
+  --color-neutral-border: #383236;
+  --color-bevel-light: #524b50;
+  --color-bevel-dark: #0a0809;
+}
+
+body {
+  font-family: 'Tahoma', 'MS Sans Serif', 'Arial', sans-serif;
+  background-color: var(--color-neutral);
+  background-image: radial-gradient(#2d272b 15%, transparent 16%);
+  background-size: 16px 16px;
+  color: #ffffff;
+  margin: 0;
+  padding: 6px;
+  user-select: auto;
+}
+
+/* Molduras Chanfradas 3D dos anos 90 com a paleta neutra e relevo */
+.win-bevel-out {
+  border-top: 2px solid var(--color-bevel-light) !important;
+  border-left: 2px solid var(--color-bevel-light) !important;
+  border-right: 2px solid var(--color-bevel-dark) !important;
+  border-bottom: 2px solid var(--color-bevel-dark) !important;
+  box-shadow: 1px 1px 0px #000000;
+  background-color: var(--color-neutral-card);
+}
+
+.win-bevel-in {
+  border-top: 2px solid var(--color-bevel-dark) !important;
+  border-left: 2px solid var(--color-bevel-dark) !important;
+  border-right: 2px solid var(--color-bevel-light) !important;
+  border-bottom: 2px solid var(--color-bevel-light) !important;
+  background-color: #1a1619;
+  color: #ffffff;
+}
+
+/* Botões Anos 90 Chanfrados */
+.win-button {
+  background-color: #2a2529;
+  border-top: 2px solid var(--color-bevel-light);
+  border-left: 2px solid var(--color-bevel-light);
+  border-right: 2px solid var(--color-bevel-dark);
+  border-bottom: 2px solid var(--color-bevel-dark);
+  box-shadow: 1px 1px 0px #000000;
+  color: #ffffff;
+  font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: none;
+}
+
+.win-button:hover {
+  background-color: #352e33;
+  color: var(--color-secondary);
+}
+
+.win-button:active, .win-button.active {
+  border-top: 2px solid var(--color-bevel-dark) !important;
+  border-left: 2px solid var(--color-bevel-dark) !important;
+  border-right: 2px solid var(--color-bevel-light) !important;
+  border-bottom: 2px solid var(--color-bevel-light) !important;
+  background-color: #1a1619;
+  color: var(--color-secondary);
+  box-shadow: inset 1px 1px 0px #000000;
+  padding: 4px 7px 2px 9px;
+}
+
+/* Botão de Destaque Primário (Vermelho #DC2626) */
+.win-button-primary {
+  background-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  border-top: 2px solid #ef4444 !important;
+  border-left: 2px solid #ef4444 !important;
+  border-right: 2px solid #991b1b !important;
+  border-bottom: 2px solid #991b1b !important;
+}
+.win-button-primary:hover {
+  background-color: #b91c1c !important;
+}
+
+/* Botão de Sucesso Terciário (Verde #16A34A) */
+.win-button-tertiary {
+  background-color: var(--color-tertiary) !important;
+  color: #ffffff !important;
+  border-top: 2px solid #22c55e !important;
+  border-left: 2px solid #22c55e !important;
+  border-right: 2px solid #15803d !important;
+  border-bottom: 2px solid #15803d !important;
+}
+.win-button-tertiary:hover {
+  background-color: #15803d !important;
+}
+
+/* Botão Secundário (Âmbar #F59E0B) */
+.win-button-secondary {
+  background-color: var(--color-secondary) !important;
+  color: #161315 !important;
+  border-top: 2px solid #fbbf24 !important;
+  border-left: 2px solid #fbbf24 !important;
+  border-right: 2px solid #b45309 !important;
+  border-bottom: 2px solid #b45309 !important;
+}
+.win-button-secondary:hover {
+  background-color: #d97706 !important;
+}
+
+/* Barra de Título Anos 90 Gradiente com Primária #DC2626 */
+.win-titlebar {
+  background: linear-gradient(90deg, var(--color-primary), #991b1b, #450a0a);
+  color: #ffffff;
+  font-family: 'Tahoma', 'MS Sans Serif', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #7f1d1d;
+}
+
+/* Barra de Título Secundária (para caixas internas e KDS) */
+.win-titlebar-secondary {
+  background: linear-gradient(90deg, #b45309, #78350f);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Display Digital LCD Anos 90 */
+.digital-lcd {
+  font-family: 'VT323', 'Courier New', monospace;
+  background-color: #0c0a0b;
+  color: var(--color-secondary);
+  text-shadow: 0 0 5px rgba(245, 158, 11, 0.7);
+  border: 2px inset var(--color-bevel-dark);
+}
+
+.digital-lcd-green {
+  font-family: 'VT323', 'Courier New', monospace;
+  background-color: #0c0a0b;
+  color: var(--color-tertiary);
+  text-shadow: 0 0 5px rgba(22, 163, 74, 0.7);
+  border: 2px inset var(--color-bevel-dark);
+}
+
+.digital-lcd-red {
+  font-family: 'VT323', 'Courier New', monospace;
+  background-color: #0c0a0b;
+  color: var(--color-primary);
+  text-shadow: 0 0 5px rgba(220, 38, 38, 0.7);
+  border: 2px inset var(--color-bevel-dark);
+}
+
+/* Letreiro Marquee Anos 90 */
+.retro-marquee {
+  background-color: #1a1619;
+  color: var(--color-secondary);
+  border-top: 1px solid var(--color-bevel-dark);
+  border-bottom: 2px inset var(--color-bevel-dark);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
+/* Scrollbars Retrô */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+::-webkit-scrollbar-track {
+  background: #1e1a1d;
+  border: 1px solid var(--color-bevel-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2529;
+  border-top: 2px solid var(--color-bevel-light);
+  border-left: 2px solid var(--color-bevel-light);
+  border-right: 2px solid var(--color-bevel-dark);
+  border-bottom: 2px solid var(--color-bevel-dark);
+}

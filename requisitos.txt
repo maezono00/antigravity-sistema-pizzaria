@@ -1,0 +1,93 @@
+Análise de Requisitos para o Sistema de Caixa e Gestão de Pedidos
+
+---
+
+PERFIL DO USUÁRIO E STAKEHOLDERS
+
+* Operador de Caixa / Atendente: Usuário primário do sistema. Requer alta facilidade de uso e fluxos diretos, sem necessidade de treinamento prévio complexo.
+* Cliente Final: Consumidores de diversas faixas etárias que realizam pedidos no balcão ou via plataformas de entrega terceirizadas.
+
+AMBIENTE OPERACIONAL E INTEGRAÇÕES
+
+* Plataformas de Delivery Externa: Integração obrigatória via API com iFood, Uber Eats e 99 Food para centralização automática de pedidos.
+* Infraestrutura: Terminal do caixa de atendimento local ligado ao módulo de estoque e módulo de entregas.
+
+PRIORIDADES DO NEGÓCIO
+
+1. Crítico: Usabilidade e facilidade de operação sem treinamento prévio.
+2. Crítico: Precisão no fechamento financeiro do caixa (eliminação de diferenças e recontagens manuais).
+3. Desejável: Automatização de baixa de produtos e otimização do cálculo de frete e rotas de entrega.
+
+---
+
+REQUISITOS FUNCIONAIS (RF)
+
+RF-01: Cadastro e Gestão de Clientes
+
+* Descrição: Permitir cadastrar e consultar dados essenciais dos clientes (nome, CPF, telefone e endereço).
+* Resultado Esperado: Agilidade no atendimento de clientes recorrentes e identificação correta de pedidos.
+
+RF-02: Lançamento e Notificação de Pedidos
+
+* Descrição: Registrar os itens do pedido, exibindo em tempo real a quantidade de produtos, o valor total consolidado e opções de personalização/itens adicionais.
+* Resultado Esperado: Notificação clara dos itens para a produção e redução de erros de lançamento.
+
+RF-03: Processamento e Liquidação de Pagamentos
+
+* Descrição: Suportar múltiplos métodos de pagamento (dinheiro, PIX, cartões de crédito/débito) e efetuar a liquidação vinculada ao pedido.
+* Resultado Esperado: Registro correto da forma de pagamento para consolidação financeira automática no caixa.
+
+RF-04: Cálculo de Frete e Gestão de Rotas de Entrega
+
+* Descrição: Calcular automaticamente o valor do frete com base no endereço e organizar os pedidos por rotas de entrega.
+* Resultado Esperado: Despacho eficiente para entregadores e cobrança justa do frete.
+
+RF-05: Integrador de Plataformas de Delivery (iFood, Uber Eats, 99 Food)
+
+* Descrição: Capturar automaticamente os pedidos originados nos aplicativos parceiros e armazená-los centralizadamente na base do sistema de caixa.
+* Resultado Esperado: Eliminação da redigitação manual de pedidos vindos do delivery.
+
+RF-07: Abertura e Fechamento Mapeado de Caixa
+
+* Descrição: Registrar abertura com fundo de caixa, somar entradas por método de pagamento em tempo real e fornecer relatório de conciliação no fechamento.
+* Resultado Esperado: Eliminação de perdas financeiras e divergências de saldo ao final do turno.
+
+---
+
+REQUISITOS NÃO FUNCIONAIS (RNF)
+
+RNF-01: Usabilidade
+
+* Descrição: Interface intuitiva e focada na agilidade de atendimento no caixa.
+* Critério Mensurável: Um operador novo deve conseguir realizar um pedido completo sem treinamento prévio em menos de 2 minutos.
+
+RNF-02: Segurança / LGPD
+
+* Descrição: Conformidade com a LGPD no tratamento de dados sensíveis (CPF, telefone, endereço).
+* Critério Mensurável: Criptografia de dados armazenados e controle de acesso por perfil de usuário.
+
+RNF-03: Disponibilidade
+
+* Descrição: Funcionamento contínuo durante o horário de pico da operação.
+* Critério Mensurável: Uptime de 99.5% nos horários de funcionamento do estabelecimento.
+
+RNF-04: Confiabilidade
+
+* Descrição: Eliminação de erros de cálculo financeiro e divergências no fechamento de caixa.
+* Critério Mensurável: 100% de precisão nos totais somados e relatórios de conciliação bancária/caixa.
+
+---
+
+RISCOS E DEPENDÊNCIAS TÉCNICAS
+
+* Dependência de APIs de Terceiros: A centralização dos pedidos depende da estabilidade das APIs públicas ou privadas do iFood, Uber Eats e 99 Food.
+* Risco de Falha de Conectividade: Quedas de internet local podem impedir a recepção de pedidos via delivery ou o recebimento via PIX e cartão. É recomendável prever um modo offline-first para registro de caixa local.
+
+---
+
+LACUNAS E PONTOS PARA ESCLARECIMENTO COM O CLIENTE
+
+1. Atribuição de Permissões (Perfis de Usuário): O cadastro de usuário se refere apenas ao cliente final ou também inclui privilégios para operadores de caixa, gerentes e entregadores?
+2. Impressão Física: Existe a necessidade de integração com impressoras térmicas (ex: ESC/POS) para emissão de comanda na cozinha e cupom fiscal/não fiscal?
+3. Mapeamento de Rotas: O cálculo da rota de entrega utilizará integração com API externa de mapas (ex: Google Maps / Mapbox) ou tabelas fixas por bairro?
+4. Detalhamento do Estoque: A baixa de estoque será por produto final (ex: 1 pizza) ou por insumos da ficha técnica (ex: gramas de queijo, massa, molho)?
